@@ -1,0 +1,41 @@
+cabal-version: 1.12
+
+-- This file has been generated from package.yaml by hpack version 0.32.0.
+--
+-- see: https://github.com/sol/hpack
+--
+-- hash: 3cc5476926b8501480551380c0d40dddb7f2668c24663458dd4a6d0c203bca83
+
+name:           ji
+version:        0.1.0.0
+description:    Please see the README on GitHub at <https://github.com/JeffreyBenjaminBrown/ji#readme>
+homepage:       https://github.com/JeffreyBenjaminBrown/ji#readme
+bug-reports:    https://github.com/JeffreyBenjaminBrown/ji/issues
+author:         Jeffrey Benjamin Brown
+maintainer:     jeffbrown.the@gmail.com
+copyright:      BSD
+license:        BSD3
+license-file:   LICENSE
+build-type:     Simple
+extra-source-files:
+    README.md
+    ChangeLog.md
+
+source-repository head
+  type: git
+  location: https://github.com/JeffreyBenjaminBrown/ji
+
+library
+  exposed-modules:
+      Lib
+    , Util
+  other-modules:
+      Paths_ji
+  hs-source-dirs:
+      src
+  build-depends:
+      base >=4.7 && <5
+    , lens
+    , Decimal
+    , containers
+  default-language: Haskell2010
