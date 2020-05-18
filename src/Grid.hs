@@ -14,6 +14,16 @@
 -- column 9 at row -3, so a -3 in the 7th harmonic would be
 -- right next to it, and therefore even easier to reach
 -- than a 0.
+--
+-- Here's one solution: Let the L1-nearest octave equivalent
+-- of the origin (0) pitch be P, and suppose it lies in
+-- column C and row R. Then to the output of `algienments`
+-- subtract some fraction of R, where the fraction is
+-- equal to C' / C, where C' is the column containing the harmonic.
+--
+-- Unfortunately it's possible that the best way to play
+-- an alignment is not along that origin-octave vector,
+-- but a different one.
 
 {-# LANGUAGE ScopedTypeVariables #-}
 
