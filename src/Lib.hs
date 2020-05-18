@@ -14,11 +14,11 @@ import Util
 import Harmonics
 
 
-minNotes = 30
-maxNotes = 60
+minNotes = 12
+maxNotes = 100
 tols = -- This list can have any length.
   -- It describes the maximum error for the first harmonics.
-  (*10) <$> repeat 12
+  (*10) <$> [2,2]
 --    example:
 --    [ 20 -- approx 3/2 to within 2 cents
 --    , 40 -- 5/4 to within 4 cents
@@ -30,7 +30,7 @@ tols = -- This list can have any length.
 --          n = numerator
 --          e = edo frac
 
-go = myPrint looking
+compareScales = myPrint looking
 
 myPrint :: forall a t. (Foldable t, Show a)
   => t a -> IO ()
@@ -72,6 +72,11 @@ truth p = f <$> harmonics p
 
 type Report = (Integer, Rational, Integer, Integer, Integer)
 
+-- | `intervals d` shows how the notes of
+-- `d`-edo approximate `just_intervals`.
+intervals :: Integer -> IO ()
+intervals = px . x
+
 px = mapM_ putStrLn . map f where
   f :: Report -> String
   f (i,r,j,k,l) =
@@ -90,7 +95,7 @@ just_intervals :: [(Double, Rational)]
 just_intervals = let
   f x = if x >= 2 then x/2 else x
   pair n = (cents $ fromRational n, n)
-  in map (pair . f) $ L.sort $ lim_11
+  in map (pair . f) $ L.sort $ lim_15
 
 -- | `sum_errs d` gives the sum of the absolute values of the errors
 -- of `d`-edo in approximating the harmonics of interest.
