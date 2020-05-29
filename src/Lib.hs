@@ -15,10 +15,10 @@ import Harmonics
 
 
 minNotes = 12
-maxNotes = 100
+maxNotes = 300
 tols = -- This list can have any length.
   -- It describes the maximum error for the first harmonics.
-  (*10) <$> [2,2]
+  (*10) <$> [1,1,1,1,1]
 --    example:
 --    [ 20 -- approx 3/2 to within 2 cents
 --    , 40 -- 5/4 to within 4 cents
@@ -45,6 +45,33 @@ matrix :: [(Integer, [Integer])]
 matrix =
   [ (d, map (round . (^. _2 . _3)) $ bests d)
   | d <- [minNotes .. maxNotes] ]
+
+-- | A damage measure.
+-- Unless the `map (uncurry ...)` clause is commented out,
+-- lower primes weigh more.
+-- For instance, here's a way to find the best
+-- (by one definition) of the first 60 EDOs.
+-- myPrint $ filter ((< 290) . snd) $ [(n, errorSum [4..8] n) | n <- [1..60]]
+errorSum
+  :: [Double] -- ^ How to weigh the first 5 primes.
+      -- For example, if weights is [4..8],
+      -- then prime 3 weighs twice what 13 does, with
+      -- other primes' weights scaling linearly between.
+      -- If zipped with (repeat 1), the weights are uniform.
+  -> Integer
+  -> Integer
+
+errorSum weights =
+  round . sum . map abs
+  . ( let
+        mean = sum weights / fromIntegral (length weights)
+        weights' = (/mean) <$> weights
+      -- Normalizing by the mean makes `errorSum`
+      -- values comparable across different weights.
+      in map (uncurry (/))
+      . flip zip weights')
+  . map (^. _2 . _3)
+  . bests
 
 bests :: Integer -> [(Rational, (Integer, Integer, Double))]
 bests d = (\r -> (r, best d r))

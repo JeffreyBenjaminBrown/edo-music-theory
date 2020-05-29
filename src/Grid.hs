@@ -21,9 +21,12 @@
 -- subtract some fraction of R, where the fraction is
 -- equal to C' / C, where C' is the column containing the harmonic.
 --
--- Unfortunately it's possible that the best way to play
+-- It's possible, however, that the best way to play
 -- an alignment is not along that origin-octave vector,
--- but a different one.
+-- but a different one, which would reduce the usefulness of that solution.
+-- In some cases that rotated playing axis will be equivalent to the
+-- axis obtained using a different spacing between columns,
+-- but I have no reason to believe that's always true.
 
 {-# LANGUAGE ScopedTypeVariables #-}
 
@@ -51,14 +54,18 @@ alignments spacing edo =
         . best (fromIntegral edo) )
   [3/2,5/4,7/4,11/8,13/8]
 
-compareGrids :: Int -> [(Int,Int,Int,[Int])]
+compareGrids :: Int -> [(Int,Int,Int,Int,[Int])]
 compareGrids edo = let
   width n = round $ fromIntegral edo / fromIntegral n
   als n = alignments n edo
-  in [ (n, sum $ map abs $ als n, width n, als n)
+  in [ ( n
+       , width n
+       , myMod edo n -- which row the probably-nearest octave lands in.
+       , sum $ map abs $ als n -- sum of errors
+       , als n) -- errors
      | n <- [6..20]]
 
-compareGrids_filt :: Int -> Int -> [(Int,Int,Int,[Int])]
+compareGrids_filt :: Int -> Int -> [(Int,Int,Int,Int,[Int])]
 compareGrids_filt maxSummedDev =
-  filter ((< maxSummedDev) . (^. _2))
+  filter ((< maxSummedDev) . (^. _4))
   . compareGrids
