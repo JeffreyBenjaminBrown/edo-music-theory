@@ -40,11 +40,21 @@ import Lib
 import Util
 
 
-myMod :: Int -> Int -> Int
-myMod x b =
-  let m = mod' x b
-  in if m > round (fromIntegral b/2)
-     then m-b else m
+compareGrids_filt :: Int -> Int -> [(Int,Int,Int,Int,[Int])]
+compareGrids_filt maxSummedDev =
+  filter ((<= maxSummedDev) . (^. _4))
+  . compareGrids
+
+compareGrids :: Int -> [(Int,Int,Int,Int,[Int])]
+compareGrids edo = let
+  width n = round $ fromIntegral edo / fromIntegral n
+  als n = alignments n edo
+  in [ ( n           -- distance (as a fraction of the edo) between columns
+       , width n     -- which column the probably-nearest octave lands in.
+       , myMod edo n -- which row     the probably-nearest octave lands in.
+       , sum $ map abs $ als n -- sum of errors
+       , als n) -- errors
+     | n <- [6..20]]
 
 alignments :: Int -> Int -> [Int]
 alignments spacing edo =
@@ -54,18 +64,8 @@ alignments spacing edo =
         . best (fromIntegral edo) )
   [3/2,5/4,7/4,11/8,13/8]
 
-compareGrids :: Int -> [(Int,Int,Int,Int,[Int])]
-compareGrids edo = let
-  width n = round $ fromIntegral edo / fromIntegral n
-  als n = alignments n edo
-  in [ ( n
-       , width n
-       , myMod edo n -- which row the probably-nearest octave lands in.
-       , sum $ map abs $ als n -- sum of errors
-       , als n) -- errors
-     | n <- [6..20]]
-
-compareGrids_filt :: Int -> Int -> [(Int,Int,Int,Int,[Int])]
-compareGrids_filt maxSummedDev =
-  filter ((< maxSummedDev) . (^. _4))
-  . compareGrids
+myMod :: Int -> Int -> Int
+myMod x b =
+  let m = mod' x b
+  in if m > round (fromIntegral b/2)
+     then m-b else m
